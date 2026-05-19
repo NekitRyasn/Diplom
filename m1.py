@@ -268,7 +268,7 @@ fig.update_layout(
     title=f"Фрактальный анализ: {selected_asset}",
     xaxis_title="Дата",
     yaxis_title="Цена",
-    height=800,
+    height=500,
     template="plotly_dark",
     hovermode="x unified"
 )
