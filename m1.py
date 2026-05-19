@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 # =========================================================
 
 st.set_page_config(
-    page_title="Фрактальный анализ рынка",
+    page_title="Фрактальный анализ рынка ВЫПОЛНИЛ НИКИТА РЯСНЯНСКИЙ",
     layout="wide"
 )
 
