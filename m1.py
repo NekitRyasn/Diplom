@@ -6,7 +6,6 @@ from dtaidistance import dtw
 import plotly.graph_objects as go
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
-from streamlit_js_eval import streamlit_js_eval
 
 # =========================================================
 # Настройки страницы
@@ -14,49 +13,8 @@ from streamlit_js_eval import streamlit_js_eval
 
 st.set_page_config(
     page_title="Фрактальный анализ рынка",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
-
-screen_width = streamlit_js_eval(
-    js_expressions='screen.width',
-    key='SCR'
-)
-
-mobile_mode = screen_width < 768
-
-# mobile_mode = st.toggle(
-#     "📱 Мобильный режим",
-#     value=False
-# )
-
-if mobile_mode:
-
-    GRAPH_HEIGHT = 900
-
-    MAIN_LINE_WIDTH = 4
-    FRACTAL_LINE_WIDTH = 5
-    FORECAST_LINE_WIDTH = 6
-
-    FONT_SIZE = 18
-
-    METRIC_LAYOUT = 1
-
-    SHOW_RANGE_SLIDER = False
-
-else:
-
-    GRAPH_HEIGHT = 650
-
-    MAIN_LINE_WIDTH = 2
-    FRACTAL_LINE_WIDTH = 3
-    FORECAST_LINE_WIDTH = 4
-
-    FONT_SIZE = 12
-
-    METRIC_LAYOUT = 3
-
-    SHOW_RANGE_SLIDER = True
 
 st.title("Фрактальный анализ рынка ценных бумаг")
 
@@ -307,82 +265,57 @@ fig.add_trace(
 )
 
 fig.update_layout(
-    title=f"Фрактальный анализ: {selected_asset}",
     xaxis_title="Дата",
     yaxis_title="Цена",
-    height=500,
+
+    height=500,  # используем вашу переменную
     template="plotly_dark",
-    hovermode="x unified"
+    hovermode="x unified",
+
+    # === ЛЕГЕНДА НАД ГРАФИКОМ ===
+    legend=dict(
+        orientation="h",  # горизонтальное расположение
+        yanchor="bottom",
+        y=1.02,  # чуть выше графика
+        xanchor="center",
+        x=0.5,
+        bgcolor="rgba(0,0,0,0.6)",  # полупрозрачный фон (красиво на тёмной теме)
+        bordercolor="rgba(255,255,255,0.2)",
+        borderwidth=1,
+        font=dict(size=18 - 2)
+    ),
+
+    margin=dict(
+        l=10,
+        r=10,
+        t=80,  # увеличил верхний отступ, чтобы легенда не налезала
+        b=10
+    )
 )
 
 # =========================================================
 # Вывод результатов
 # =========================================================
 
-if METRIC_LAYOUT == 3:
+col1, col2, col3 = st.columns(3)
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.metric(
-            "Процент совпадения",
-            f"{similarity_percent:.2f}%"
-        )
-
-    with col2:
-        st.metric(
-            "DTW расстояние",
-            f"{best_distance:.4f}"
-        )
-
-    with col3:
-        st.metric(
-            "Длина прогноза",
-            f"{forecast_days} дней"
-        )
-
-else:
-
+with col1:
     st.metric(
         "Процент совпадения",
         f"{similarity_percent:.2f}%"
     )
 
+with col2:
     st.metric(
         "DTW расстояние",
         f"{best_distance:.4f}"
     )
 
+with col3:
     st.metric(
         "Длина прогноза",
         f"{forecast_days} дней"
     )
-
-# fig.update_layout(
-#
-#     title=f"Фрактальный анализ: {selected_asset}",
-#
-#     xaxis_title="Дата",
-#     yaxis_title="Цена",
-#
-#     template="plotly_dark",
-#
-#     hovermode="x unified",
-#
-#     height=GRAPH_HEIGHT,
-#
-#     font=dict(
-#         size=FONT_SIZE
-#     ),
-#
-#     margin=dict(
-#         l=10,
-#         r=10,
-#         t=50,
-#         b=10
-#     )
-# )
-
 
 st.plotly_chart(
     fig,
